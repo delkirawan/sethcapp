@@ -48,12 +48,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   String _lastSelected = 'TAB: 0';
 
   void _selectedTab(int index) {
+    print("selectedTab: $index");
     setState(() {
       _lastSelected = 'TAB: $index';
     });
   }
 
   void _selectedFab(int index) {
+    print("selectedFab: $index");
     setState(() {
       _lastSelected = 'FAB: $index';
     });
