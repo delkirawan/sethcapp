@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:sethcapp/constant.dart';
 import 'package:sethcapp/widgets/my_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dropdown_search/dropdown_search.dart';
+import 'package:sethcapp/user_model.dart';
 
 class Place extends StatefulWidget {
   @override
@@ -31,6 +34,83 @@ class _PlaceState extends State<Place> {
       offset = (controller.hasClients) ? controller.offset : 0;
     });
   }
+
+  Future<List<UserModel>> getData(filter) async {
+    var response = await Dio().get(
+      "http://5d85ccfb1e61af001471bf60.mockapi.io/user",
+      queryParameters: {"filter": filter},
+    );
+
+    var models = UserModel.fromJsonList(response.data);
+    return models;
+  }
+
+  Widget _customDropDownExample(
+      BuildContext context, UserModel item, String itemDesignation) {
+    return Container(
+      child: (item?.avatar == null)
+          ? ListTile(
+              contentPadding: EdgeInsets.all(0),
+              leading: CircleAvatar(),
+              title: Text("No item selected"),
+            )
+          : ListTile(
+              contentPadding: EdgeInsets.all(0),
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(item.avatar),
+              ),
+              title: Text(item.name),
+              subtitle: Text(
+                item.createdAt.toString(),
+              ),
+            ),
+    );
+  }
+
+  Widget _customPopupItemBuilderExample2(
+      BuildContext context, UserModel item, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(item.name),
+        subtitle: Text(item.createdAt.toString()),
+        leading: CircleAvatar(
+          backgroundImage: NetworkImage(item.avatar),
+        ),
+      ),
+    );
+  }
+
+    Widget _customPopupItemBuilderExample(
+      BuildContext context, UserModel item, bool isSelected) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+              border: Border.all(color: Theme.of(context).primaryColor),
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+      child: ListTile(
+        selected: isSelected,
+        title: Text(item.name),
+        subtitle: Text(item.createdAt.toString()),
+        leading: CircleAvatar(
+          backgroundImage: NetworkImage(item.avatar),
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,24 +142,30 @@ class _PlaceState extends State<Place> {
                 children: <Widget>[
                   SizedBox(width: 20),
                   Expanded(
-                    child: DropdownButton(
-                      isExpanded: true,
-                      underline: SizedBox(),
-                      icon: SvgPicture.asset("assets/icons/search.svg"),
-                      value: "Where do you want to go?",
-                      items: [
-                        'Where do you want to go?',
-                        'Yogyakarta',
-                        'DKI Jakarta',
-                        'Banten',
-                        'Listprovinsi'
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (value) {},
+                    child: DropdownSearch<UserModel>(
+                      searchBoxController: TextEditingController(text: 'Mrs'),
+                      mode: Mode.BOTTOM_SHEET,
+                      isFilteredOnline: true,
+                      showClearButton: true,
+                      showSearchBox: true,
+                      label: 'User *',
+                      dropdownSearchDecoration: InputDecoration(
+                        filled: true,
+                        fillColor:
+                            Theme.of(context).inputDecorationTheme.fillColor,
+                      ),
+                      autoValidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (UserModel u) =>
+                          u == null ? "user field is required " : null,
+                      onFind: (String filter) {
+                        print("Filter2: $filter");
+                        return getData(filter);
+                      },
+                      onChanged: (UserModel data) {
+                        print(data);
+                      },
+                      dropdownBuilder: _customDropDownExample,
+                      popupItemBuilder: _customPopupItemBuilderExample,
                     ),
                   ),
                 ],

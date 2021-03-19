@@ -34,6 +34,8 @@ dependencies:
   flappy_search_bar: ^1.4.1
   qr_flutter: ^4.0.0
   barcode_scan_fix : any
+  dropdown_search:
+
 
 dev_dependencies:
   flutter_test:
