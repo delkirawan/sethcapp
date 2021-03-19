@@ -21,16 +21,16 @@ class _qr_codeState extends State<qr_code> {
   Widget build(BuildContext context) {
     return new MaterialApp(
       home: new Scaffold(
-          appBar: new AppBar(
-            title: new Text('Barcode Scanner Example'),
-          ),
+          appBar: new AppBar(),
           body: new Center(
             child: new Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 new Container(
-                  child: new MaterialButton(
+                  child: new ElevatedButton(
                       onPressed: scan, child: new Text("Scan")),
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(10.0),
                 ),
                 new Text(barcode),
               ],
